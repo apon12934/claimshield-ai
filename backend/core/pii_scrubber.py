@@ -147,7 +147,11 @@ class PIIScrubber:
                 pat = re.compile(rf"(?<![\w\[]){re.escape(v)}(?![\w\]])", re.IGNORECASE)
                 out, n = pat.subn(tok, out)
                 occurrences += n
-            # Note: surname with title matching to be refined
+            # titled surname form: "Mr. Sheikh"
+            if len(parts) >= 2:
+                pat = re.compile(rf"\b(?:Mr|Mrs|Ms|Mx|Miss)\.?[ \t]+{re.escape(parts[-1])}\b", re.IGNORECASE)
+                out, n = pat.subn(tok, out)
+                occurrences += n
 
         counts = vault.categories()
         return ScrubResult(text=out, mapping=dict(vault.token_to_value), counts=counts, occurrences=occurrences)

@@ -126,10 +126,12 @@ class BillAuditorAgent:
 
         # 2. Unbundled OR supply detection (Section 2.3(A))
         surgical_packages = {l.code for l in parsed if l.code in SURGICAL_PACKAGES}
+        flagged_unbundled_indices: set[int] = set()
         for pkg_code in surgical_packages:
             allowed_supplies = SURGICAL_PACKAGES[pkg_code]
             for idx, item in enumerate(parsed):
-                if item.code in allowed_supplies:
+                if item.code in allowed_supplies and idx not in flagged_unbundled_indices:
+                    flagged_unbundled_indices.add(idx)
                     findings.append(AuditFinding(
                         severity="CRITICAL",
                         category="UNBUNDLED",

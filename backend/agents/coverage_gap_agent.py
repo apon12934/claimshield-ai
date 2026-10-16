@@ -82,9 +82,10 @@ class CoverageGapAgent:
         }
 
     # --------------------------------------------------------------- L2 tool
-    def tool_stage_rider(self, session_id: str = "", policy_id: str = "", rider_ids: list | tuple = (), **_: Any) -> dict:
+    def tool_stage_rider(self, session_id: str = "", policy_id: str = "", rider_ids: list | tuple = (),
+                         disposable_income: Optional[float] = None, **_: Any) -> dict:
         prof = self.user_profile()
-        disp = prof["disposable_income"]
+        disp = float(disposable_income) if disposable_income is not None else prof["disposable_income"]
         cost = round(sum(RIDERS[r]["monthly_cost"] for r in rider_ids), 2)
         cap = self.budget_cap(disp)
         if not rider_ids:
